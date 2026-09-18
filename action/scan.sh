@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Sixi AI. SPDX-License-Identifier: Apache-2.0 (LICENSE and NOTICE: github.com/sixi-ai/scan-action).
+#
 # The body of the GitHub Action (../action.yml): launch, wait, download the SARIF, gate.
 #
 # Only curl and jq, both on every GitHub-hosted runner. Every request body is built by jq from
@@ -12,7 +14,7 @@ set -euo pipefail
 
 : "${SIXI_TARGET:?target is required}"
 : "${SIXI_API_TOKEN:?api-token is required}"
-api="${SIXI_API_URL:-https://sixi.ch}"
+api="${SIXI_API_URL:-https://sixi.ai}"
 api="${api%/}"
 transport="${SIXI_TRANSPORT:-rest}"
 profile="${SIXI_PROFILE:-quick}"

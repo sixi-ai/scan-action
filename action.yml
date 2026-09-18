@@ -1,3 +1,5 @@
+# Copyright 2026 Sixi AI. SPDX-License-Identifier: Apache-2.0 (LICENSE and NOTICE: github.com/sixi-ai/scan-action).
+#
 # The GitHub Action: one hosted scan per workflow run, the findings in the Security tab.
 #
 # It is a thin client over the hosted API and runs no binary — a trial account has no binary, and the
@@ -24,7 +26,7 @@ inputs:
     required: true
   api-url:
     description: The Sixi API. The hosted service by default; a self-host names its own.
-    default: https://sixi.ch
+    default: https://sixi.ai
   transport:
     description: rest | mcp | a2a | websocket
     default: rest

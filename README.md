@@ -64,7 +64,7 @@ if a proxy's error page carried something that looked like a finding.
 |---|---|---|
 | `target` | required | The endpoint. REST, MCP, A2A or WebSocket, reachable from the internet |
 | `api-token` | required | From a secret, never a literal |
-| `api-url` | `https://sixi.ch` | A self-host names its own |
+| `api-url` | `https://sixi.ai` | A self-host names its own |
 | `transport` | `rest` | `rest`, `mcp`, `a2a`, `websocket` |
 | `name` | the target host | The label the dashboard files the scan under; the diff joins runs by it |
 | `profile` | `quick` | `smoke`, `quick`, `deep`, `compliance`, `sharp`. `smoke` is a wiring check and is not evidence |
@@ -108,4 +108,5 @@ This repository is published from Sixi's main tree, where the script is exercise
 service by an acceptance suite before every release. Issues and pull requests are welcome here;
 the fix lands upstream first and is published back.
 
-Licensed under the Apache License, Version 2.0. See `LICENSE`.
+Copyright 2026 Sixi AI. Licensed under the Apache License, Version 2.0. See `LICENSE` and `NOTICE`:
+a redistribution or a derivative work carries both with it.
