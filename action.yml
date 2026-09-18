@@ -26,7 +26,7 @@ inputs:
     required: true
   api-url:
     description: The Sixi API. The hosted service by default; a self-host names its own.
-    default: https://sixi.ai
+    default: https://sixi.ch
   transport:
     description: rest | mcp | a2a | websocket
     default: rest

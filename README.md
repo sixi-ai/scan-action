@@ -64,7 +64,7 @@ if a proxy's error page carried something that looked like a finding.
 |---|---|---|
 | `target` | required | The endpoint. REST, MCP, A2A or WebSocket, reachable from the internet |
 | `api-token` | required | From a secret, never a literal |
-| `api-url` | `https://sixi.ai` | A self-host names its own |
+| `api-url` | `https://sixi.ch` | A self-host names its own |
 | `transport` | `rest` | `rest`, `mcp`, `a2a`, `websocket` |
 | `name` | the target host | The label the dashboard files the scan under; the diff joins runs by it |
 | `profile` | `quick` | `smoke`, `quick`, `deep`, `compliance`, `sharp`. `smoke` is a wiring check and is not evidence |

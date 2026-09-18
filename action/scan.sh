@@ -14,7 +14,7 @@ set -euo pipefail
 
 : "${SIXI_TARGET:?target is required}"
 : "${SIXI_API_TOKEN:?api-token is required}"
-api="${SIXI_API_URL:-https://sixi.ai}"
+api="${SIXI_API_URL:-https://sixi.ch}"
 api="${api%/}"
 transport="${SIXI_TRANSPORT:-rest}"
 profile="${SIXI_PROFILE:-quick}"
